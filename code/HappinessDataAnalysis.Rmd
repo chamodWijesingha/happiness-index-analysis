@@ -1,0 +1,140 @@
+---
+title: "Untitled"
+author: "W.M.C.C.M.Wijesingha S/18/836"
+date: "4/6/2024"
+output:
+  pdf_document: default
+  html_document: default
+  word_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(psych)
+library(tidyverse)
+library(ggplot2)
+library(ggcorrplot)
+library(gridExtra)
+```
+
+```{r}
+
+HappinessData <- read_csv("../data/Happiness_data_2019.csv")
+
+```
+```{r}
+head(HappinessData)
+```
+```{r}
+#dimention of dataset
+dim(HappinessData)
+```
+```{r}
+Happiness_data <- HappinessData[ ,-which(names(HappinessData) %in% c("Overall rank", "Country or region"))]
+```
+
+```{r}
+#mean of each variable
+apply(Happiness_data,2,mean)
+```
+
+```{r}
+#Variance of each variable
+apply(Happiness_data,2,var)
+```
+```{r}
+#Correlation Matrix for the data
+
+cor_matrix<-cor(Happiness_data,method = "spearman")
+cor_matrix
+```
+```{r}
+#Graphical view of Correlation Matrix
+ggcorrplot(cor_matrix)
+```
+
+```{r}
+#Eigen values
+eigen_val<-eigen(cor_matrix)
+eigen_val
+```
+```{r}
+#Find PCA
+pca <- princomp(cor_matrix)
+pca
+```
+
+```{r}
+summary(pca)
+```
+
+
+
+```{r}
+#Scree plot
+library(factoextra)
+fviz_eig(pca,addlabels=TRUE)
+```
+
+```{r}
+#Parallel analysis
+fa.parallel(Happiness_data,fm = "pa",fa = "fa")
+```
+
+```{r}
+#Covariance matix
+cov_matrix<-cov(Happiness_data)
+cov_matrix
+```
+
+
+```{r}
+#Kaiser-Mayer-Olkin results
+KMO(r=cor_matrix)
+```
+
+```{r}
+#Bartlett’s Test
+cortest.bartlett(Happiness_data)
+```
+
+```{r}
+#determinant of covariance matrix
+det(cov_matrix)
+```
+```{r}
+#Proportion of variation explained by each PCs.
+PVE <- eigen_val$values / sum(eigen_val$values) * 100
+round(PVE,3)
+```
+```{r}
+#Summation of the eigen values and PVE
+sum(eigen_val$values)
+sum(PVE)
+pca$loadings[, 1:2]
+```
+
+```{r}
+#Factor analysis
+Happiness_data.fa<-factanal(Happiness_data,factors = 2)
+Happiness_data.fa
+```
+```{r}
+Happiness_data.fa<-factanal(Happiness_data,factors = 3)
+Happiness_data.fa
+```
+
+
+
+
+
+
+
+
+
+
+
+
